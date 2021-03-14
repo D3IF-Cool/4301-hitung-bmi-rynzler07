@@ -1,4 +1,4 @@
-package com.d3if4119.modul03.ui
+package com.d3if4119.modul05.ui
 
 import android.os.Bundle
 import android.text.TextUtils
@@ -7,8 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.d3if4119.modul03.R
-import com.d3if4119.modul03.databinding.FragmentHitungBinding
+import com.d3if4119.modul05.R
+import com.d3if4119.modul05.databinding.FragmentHitungBinding
 
 class HitungFragment : Fragment() {
     private lateinit var binding: FragmentHitungBinding
