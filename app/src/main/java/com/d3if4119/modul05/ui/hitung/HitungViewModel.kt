@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.d3if4119.modul05.data.HasilBmi
+import com.d3if4119.modul05.data.HitungBmi
 import com.d3if4119.modul05.data.KategoriBmi
 import com.d3if4119.modul05.db.BmiDao
 import com.d3if4119.modul05.db.BmiEntity
@@ -18,30 +19,14 @@ class HitungViewModel(private val db: BmiDao) : ViewModel() {
     private val navigasi = MutableLiveData<KategoriBmi?>()
 
     fun hitungBmi(berat: String, tinggi: String, isMale: Boolean) {
-        val tinggiCm = tinggi.toFloat() / 100
-        val bmi = berat.toFloat() / (tinggiCm * tinggiCm)
-        val kategori = if (isMale) {
-            when {
-                bmi < 20.5 -> KategoriBmi.KURUS
-                bmi >= 27.0 -> KategoriBmi.GEMUK
-                else -> KategoriBmi.IDEAL
-            }
-        }
-        else {
-            when {
-                bmi < 18.5 -> KategoriBmi.KURUS
-                bmi >= 25.0 -> KategoriBmi.GEMUK
-                else -> KategoriBmi.IDEAL
-            }
-        }
-        hasilBmi.value = HasilBmi(bmi, kategori)
+        val dataBmi = BmiEntity(
+            berat = berat.toFloat(),
+            tinggi = tinggi.toFloat(),
+            isMale = isMale
+        )
+        hasilBmi.value = HitungBmi.hitung(dataBmi)
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val dataBmi = BmiEntity(
-                    berat = berat.toFloat(),
-                    tinggi = tinggi.toFloat(),
-                    isMale = isMale
-                )
                 db.insert(dataBmi)
             }
         }
