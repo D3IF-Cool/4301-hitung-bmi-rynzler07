@@ -1,4 +1,4 @@
-package com.d3if4119.modul05.ui
+package com.d3if4119.modul05.ui.hitung
 
 import android.content.Intent
 import android.os.Bundle
@@ -12,11 +12,11 @@ import androidx.navigation.fragment.findNavController
 import com.d3if4119.modul05.R
 import com.d3if4119.modul05.data.KategoriBmi
 import com.d3if4119.modul05.databinding.FragmentHitungBinding
+import com.d3if4119.modul05.ui.hitung.HitungFragmentDirections
 
 class HitungFragment : Fragment() {
     private val viewModel: HitungViewModel by viewModels()
     private lateinit var binding: FragmentHitungBinding
-    private lateinit var kategoriBmi: KategoriBmi
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
@@ -38,11 +38,7 @@ class HitungFragment : Fragment() {
         binding = FragmentHitungBinding.inflate(
                 layoutInflater, container, false)
         binding.buttonHitung.setOnClickListener { hitungBmi() }
-        binding.saranButton.setOnClickListener { view: View ->
-            view.findNavController().navigate(
-                HitungFragmentDirections.actionHitungFragmentToSaranFragment(kategoriBmi)
-            )
-        }
+        binding.saranButton.setOnClickListener{ viewModel.mulaiNavigasi() }
         binding.buttonReset.setOnClickListener{ reset() }
         binding.shareButton.setOnClickListener{ shareData() }
         setHasOptionsMenu(true)
@@ -58,6 +54,14 @@ class HitungFragment : Fragment() {
                 getKategori(it.kategori))
             binding.buttonGroup.visibility = View.VISIBLE
         })
+
+        viewModel.getNavigasi().observe(viewLifecycleOwner, {
+            if (it == null) return@observe
+            findNavController().navigate(HitungFragmentDirections
+                    .actionHitungFragmentToSaranFragment(it))
+            viewModel.selesaiNavigasi()
+        })
+
     }
 
     private fun getKategori(kategori: KategoriBmi): String {
@@ -66,7 +70,6 @@ class HitungFragment : Fragment() {
             KategoriBmi.IDEAL -> R.string.ideal
             KategoriBmi.GEMUK -> R.string.gemuk
         }
-
         return getString(stringRes)
     }
 
