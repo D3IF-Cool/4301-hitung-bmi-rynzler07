@@ -3,19 +3,27 @@ package com.d3if4119.modul05.ui.hitung
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.d3if4119.modul05.R
 import com.d3if4119.modul05.data.KategoriBmi
 import com.d3if4119.modul05.databinding.FragmentHitungBinding
+import com.d3if4119.modul05.db.BmiDb
 import com.d3if4119.modul05.ui.hitung.HitungFragmentDirections
 
 class HitungFragment : Fragment() {
-    private val viewModel: HitungViewModel by viewModels()
+    private val viewModel: HitungViewModel by lazy {
+        val db = BmiDb.getInstance(requireContext())
+        val factory = HitungViewModelFactory(db.dao)
+        ViewModelProvider(this, factory).get(HitungViewModel::class.java)
+    }
+
     private lateinit var binding: FragmentHitungBinding
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -62,6 +70,10 @@ class HitungFragment : Fragment() {
             viewModel.selesaiNavigasi()
         })
 
+        viewModel.data.observe(viewLifecycleOwner, {
+            if (it == null) return@observe
+            Log.d("HitungFragment", "Data tersimpan. ID = ${it.id}")
+        })
     }
 
     private fun getKategori(kategori: KategoriBmi): String {
